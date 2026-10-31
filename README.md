@@ -28,6 +28,19 @@ the LibreSSL package and then remove the OpenSSL package before installing
 # emerge -f dev-libs/libressl
 # emerge -C dev-libs/openssl
 # emerge -av1 dev-libs/libressl
+```
+
+For the time being, it is required to mask `dev-libs/openssl` from `::gentoo`
+and unmask `dev-libs/openssl` from `::libressl`. 
+Create the directories (if needed) and write the configuration:
+
+```
+# mkdir -p /etc/portage/package.unmask /etc/portage/package.mask
+# echo "dev-libs/openssl::libressl" >> /etc/portage/package.unmask/libressl
+# echo "dev-libs/openssl::gentoo"   >> /etc/portage/package.mask/libressl
+```
+Then rebuild packages that were linked against OpenSSL:
+```
 # emerge @preserved-rebuild
 ```
 
@@ -40,6 +53,14 @@ following contents:
 net-libs/ngtcp2 -openssl
 ```
 See LibreSSL issue https://github.com/libressl/portable/issues/1114 for rationale.
+
+Furthermore, if you require Node.js, it currently does not build with the
+`system-ssl` USE flag enabled. Work around it with:
+
+```
+# echo "net-libs/nodejs -system-ssl" >> /etc/portage/package.use/libressl
+```
+
 
 ## links
 
